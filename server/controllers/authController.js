@@ -16,18 +16,25 @@ exports.register = async (req, res) => {
     console.log('Datos recibidos:', req.body);
     const { name, email, password } = req.body;
 
+    // Validación básica antes de interactuar con la base de datos
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    }
+
     // Verificar si el usuario ya existe
     const userExists = await User.findOne({ where: { email } });
-    
     if (userExists) {
       return res.status(400).json({ message: 'El correo electrónico ya está registrado' });
     }
+
+    // Hashear la contraseña antes de guardarla
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crear usuario
     const user = await User.create({
       name,
       email,
-      password
+      password: hashedPassword
     });
 
     // Generar token
@@ -39,8 +46,17 @@ exports.register = async (req, res) => {
       email: user.email,
       token
     });
+
   } catch (error) {
     console.error('Error al registrar usuario:', error);
+
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        message: 'Error de validación',
+        errors: error.errors.map(err => err.message)
+      });
+    }
+
     res.status(500).json({ message: 'Error al registrar usuario' });
   }
 };
@@ -52,14 +68,12 @@ exports.login = async (req, res) => {
 
     // Buscar usuario
     const user = await User.findOne({ where: { email } });
-    
     if (!user) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
     // Verificar contraseña
-    const isMatch = await user.comparePassword(password);
-    
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
@@ -74,6 +88,7 @@ exports.login = async (req, res) => {
       image: user.image,
       token
     });
+
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
     res.status(500).json({ message: 'Error al iniciar sesión' });
@@ -86,7 +101,11 @@ exports.getProfile = async (req, res) => {
     const user = await User.findByPk(req.user.id, {
       attributes: { exclude: ['password'] }
     });
-    
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
     res.json(user);
   } catch (error) {
     console.error('Error al obtener perfil:', error);
