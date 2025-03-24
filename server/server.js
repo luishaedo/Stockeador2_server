@@ -25,12 +25,12 @@ app.use((req, res, next) => {
   }
   next();
 });
-///hasta aqui las pruebas
+
 
 // Middleware
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:3001', "http://localhost:5173"],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  origin: ['https://stockeador-client.vercel.app' ,'http://localhost:3000', 'http://localhost:3001', "http://localhost:5173"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
 app.use(cors(corsOptions));
 app.use(express.json());
