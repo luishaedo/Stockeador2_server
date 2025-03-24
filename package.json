@@ -2,7 +2,7 @@
   "name": "stockeador_server",
   "version": "1.0.0",
   "description": "stockeador_server",
-  "main": "server.js",
+  "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js"
   },
