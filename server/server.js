@@ -48,7 +48,10 @@ app.get('/api/test', (req, res) => {
 // Sincronizar modelos con la base de datos
 const syncDatabase = async () => {
   try {
-    await sequelize.sync({ alter: true });
+    //actualiza bdd
+    //await sequelize.sync({ alter: true });
+    //borra y reinicia bdd
+    await sequelize.sync({ force: true });
     console.log('Base de datos sincronizada correctamente');
   } catch (error) {
     console.error('Error al sincronizar la base de datos:', error);
