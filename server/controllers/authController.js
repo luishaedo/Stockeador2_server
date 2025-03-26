@@ -64,7 +64,14 @@ exports.register = async (req, res) => {
 // Iniciar sesión
 exports.login = async (req, res) => {
   try {
+
+    console.log("Datos recibidos en login:", req.body);
+
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    }
 
     // Buscar usuario
     const user = await User.findOne({ where: { email } });
@@ -72,11 +79,21 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
+    console.log("Usuario encontrado:", user.email);
+
+    // Verificar si la contraseña en la BD está encriptada
+    if (!user.password.startsWith("$2a$")) {
+      console.log("Error: La contraseña no está encriptada correctamente en la base de datos.");
+      return res.status(500).json({ message: "Error del servidor" });
+    }
+
     // Verificar contraseña
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      console.log("Contraseña incorrecta para:", email);
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
+    console.log("Contraseña correcta, generando token...");
 
     // Generar token
     const token = generateToken(user.id);
