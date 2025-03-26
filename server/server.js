@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
 // Middleware
 const corsOptions = {
-  origin: ['https://stockeador-client.vercel.app' ,'http://localhost:3000', 'http://localhost:3001', "http://localhost:5173"],
+  origin: ['https://stockeador-client.vercel.app', 'https://stockeador-client-6r9wup1yb.vercel.app' ,'http://localhost:3000', 'http://localhost:3001', "http://localhost:5173"],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
 app.use(cors(corsOptions));
