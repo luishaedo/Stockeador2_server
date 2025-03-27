@@ -85,7 +85,7 @@ exports.login = async (req, res) => {
     console.log("contraseña password",password);
     console.log("contraseña user.password",user.password);
     // Verificar si la contraseña en la BD está encriptada
-    if (!user.password.startsWith("$2a$")) {
+    if (user.password.startsWith("$2a$")) {
       console.log("Error: La contraseña no está encriptada correctamente en la base de datos.");
       return res.status(500).json({ message: "Error del servidor" });
     }
