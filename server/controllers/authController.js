@@ -65,9 +65,9 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
 
-    console.log("Datos recibidos en login:", req.body);
-
+    
     const { email, password } = req.body;
+    console.log("Datos recibidos en login:", req.body);
 
     if (!email || !password) {
       return res.status(400).json({ message: "Todos los campos son obligatorios" });
