@@ -82,10 +82,10 @@ exports.login = async (req, res) => {
     console.log("Usuario encontrado:", user.email);
 
     // Verificar si la contraseña en la BD está encriptada
-    if (!user.password.startsWith("$2a$")) {
-      console.log("Error: La contraseña no está encriptada correctamente en la base de datos.");
-      return res.status(500).json({ message: "Error del servidor" });
-    }
+    // if (!user.password.startsWith("$2a$")) {
+    //   console.log("Error: La contraseña no está encriptada correctamente en la base de datos.");
+    //   return res.status(500).json({ message: "Error del servidor" });
+    // }
 
     // Verificar contraseña
     const isMatch = await bcrypt.compare(password, user.password);
