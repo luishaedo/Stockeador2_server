@@ -27,16 +27,17 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'El correo electrónico ya está registrado' });
     }
 
-    // Hashear la contraseña antes de guardarla
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("contraseñña hash antes de guardarse", hashedPassword);
+    // // Hashear la contraseña antes de guardarla
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    // console.log("contraseñña hash antes de guardarse", hashedPassword);
     
 
     // Crear usuario
     const user = await User.create({
       name,
       email,
-      password: hashedPassword
+      password
+      // password: hashedPassword
     });
 
     // Generar token
@@ -85,21 +86,21 @@ exports.login = async (req, res) => {
     console.log("contraseña password",password);
     console.log("contraseña user.password",user.password);
 
-    // Verificar si la contraseña en la BD está encriptada
-    if (!user.password.startsWith("$2b$")) {
-      console.log("Error: La contraseña no está encriptada correctamente en la base de datos.");
-      return res.status(500).json({ message: "Error del servidor" });
-    }
+    // // Verificar si la contraseña en la BD está encriptada
+    // if (!user.password.startsWith("$2b$")) {
+    //   console.log("Error: La contraseña no está encriptada correctamente en la base de datos.");
+    //   return res.status(500).json({ message: "Error del servidor" });
+    // }
 
-    // Verificar contraseña
-    const isMatch = await bcrypt.compare(password, user.password);
+    // // Verificar contraseña
+    // const isMatch = await bcrypt.compare(password, user.password);
   
 
-    if (!isMatch) {
-      console.log("Contraseña incorrecta para:", email);
-      return res.status(401).json({ message: 'Credenciales inválidas' });
-    }
-    console.log("Contraseña correcta, generando token...");
+    // if (!isMatch) {
+    //   console.log("Contraseña incorrecta para:", email);
+    //   return res.status(401).json({ message: 'Credenciales inválidas' });
+    // }
+    // console.log("Contraseña correcta, generando token...");
 
     // Generar token
     const token = generateToken(user.id);
