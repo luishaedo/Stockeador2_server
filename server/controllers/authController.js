@@ -134,17 +134,16 @@ exports.login = async (req, res) => {
     }
 
     console.log("Usuario encontrado:", user.email);
-    console.log("contraseña password", password);
-    console.log("contraseña user.password", user.password);
+    console.log("➡️ Contraseña ingresada:", password);
+    console.log("➡️ Contraseña guardada en la BD:", user.password);
 
-    // Verificar contraseña
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      console.log("Contraseña incorrecta para:", email);
+    // PRUEBA: Comparar sin bcrypt
+    if (!isMatch(password, user.password)) {
+      console.log("⚠️ Contraseña incorrecta (sin bcrypt)");
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
-    console.log("Contraseña correcta, generando token...");
+
+    console.log("✅ Contraseña correcta, generando token...");
 
     // Generar token
     const token = generateToken(user.id);
