@@ -118,6 +118,7 @@ exports.register = async (req, res) => {
 // };
 
 // Iniciar sesión
+// Iniciar sesión
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -127,7 +128,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Todos los campos son obligatorios" });
     }
 
-    // Buscar usuario
+    // Buscar usuario en la base de datos
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
@@ -137,9 +138,25 @@ exports.login = async (req, res) => {
     console.log("➡️ Contraseña ingresada:", password);
     console.log("➡️ Contraseña guardada en la BD:", user.password);
 
-    // PRUEBA: Comparar sin bcrypt
+    // Función alternativa isMatch para depuración
+    function isMatch(passIngresada, passGuardada) {
+      console.log("🔍 Comparando contraseñas sin bcrypt:");
+      console.log("➡️ Contraseña ingresada:", passIngresada);
+      console.log("➡️ Contraseña guardada en la base de datos:", passGuardada);
+      return passIngresada === passGuardada;
+    }
+
+    // Comprobación sin bcrypt (prueba)
     if (!isMatch(password, user.password)) {
       console.log("⚠️ Contraseña incorrecta (sin bcrypt)");
+      return res.status(401).json({ message: 'Credenciales inválidas' });
+    }
+
+    // Comprobación con bcrypt (si las contraseñas coinciden en texto plano)
+    const matchBcrypt = await bcrypt.compare(password, user.password);
+    console.log("✅ bcrypt.compare:", matchBcrypt);
+
+    if (!matchBcrypt) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
@@ -161,7 +178,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Error al iniciar sesión' });
   }
 };
-
 
 
 
